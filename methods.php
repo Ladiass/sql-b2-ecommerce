@@ -11,4 +11,7 @@
         case "logout":
             User::Logout();
             break;
+        case "addpost":
+            Products::add($_POST);
+            break;
     }

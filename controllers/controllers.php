@@ -43,10 +43,10 @@
             }
             $password = password_hash($inf["password"],PASSWORD_DEFAULT);
             
-
             if(!empty(User::Find_user($username)) || !empty(User::Find_with_email($email))){
                 $_SESSION["status"] = "Username/Email has register before already !";
                 header("Location: /views/partials/user.php?status=error1");
+                exit();
             }
 
             $sql = "INSERT INTO `users` (`username`,`frist_name`,`last_name`,`address`,`email`,`password`) VALUE(?, ?, ?, ?, ?, ?);";
@@ -59,15 +59,14 @@
             $stmt->execute();
             $_SESSION["status"] = "Success to Register";
 
-            Email::send_email($email,$f_name);
-            die();
+            Email::send_email($email,$f_name);  
             header("Location: /");
             exit();
         }
 
         public static function Find_user($username){
             global $db ;
-            $sql = "SELECT `username`,`password` FROM `users` WHERE `username` = ?";
+            $sql = "SELECT `username`,`email`,`password`,`isAdmin` FROM `users` WHERE `username` = ?";
             $stmt = $db->prepare($sql);
             
             $stmt->bind_param("s",$username);
@@ -82,7 +81,7 @@
 
         public static function Find_with_email($email){
             global $db ;
-            $sql = "SELECT `username`,`email`,`password` FROM `users` WHERE `email` = ? ";
+            $sql = "SELECT `username`,`email`,`password`,`isAdmin` FROM `users` WHERE `email` = ? ";
             $stmt = $db->prepare($sql);
             
             $stmt->bind_param("s",$email);
@@ -124,5 +123,65 @@
                 return "Success to send the email , Pls check in your email !";
             }
             return "Something was Wrong,Pls content Our Admin!";
+        }
+    }
+
+    class Products{
+
+
+        public static function add($data){
+            global $db;
+            $category_id = Products::find_categoryid($data["category"]);
+            $path_image = Products::image($_FILES);
+
+            $sql = "INSERT INTO `products` (`name`, `price`, `description`, `image`, `category_id`) VALUES (?,?,?,?,?)";
+            $stmt = $db->stmt_init();
+            if(!$stmt->prepare($sql)){
+                header("Location: /?status=Error!");
+                exit();
+            }
+
+            $stmt->bind_param("sdssi",$data["product_name"],$data["price"],$data["desc"],$path_image,$category_id);
+            $stmt->execute();
+            
+            $_SESSION["status"] = "Success to Add the Products";
+
+            header("Location: /");
+            exit();
+        }
+
+        public static function find_categoryid($data){
+            global $db;
+            $sql = "SELECT cetegory_id FROM `categories` WHERE `name`= ?";
+            $stmt = $db->stmt_init();
+            if(!$stmt->prepare($sql)){
+                header("Location: /?status=Error!");
+                exit();
+            }
+            $stmt->bind_param("s",$data);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $id = $result->fetch_all(MYSQLI_ASSOC);
+            return $id[0]["cetegory_id"];
+            $stmt->close();
+        }
+
+        public static function image($data){
+            //// Image
+            $img_name = $data['image']['name'];
+            
+            $img_tmpname = $data["image"]["tmp_name"];
+            //pathinfo() is a method that returns information about a file path
+            $img_type = pathinfo($img_name,PATHINFO_EXTENSION);
+
+            $type = array("jpg","svg","jpeg","png","gif");
+            if(!in_array($img_type,$type)){
+                echo "Please upload an image file";
+                die();
+            }
+            /////////$_SERVER["DOCUMENT_ROOT"];
+            move_uploaded_file($img_tmpname,$_SERVER["DOCUMENT_ROOT"]."../assets/img/".$img_name);
+            $path_image = "/assets/img/".$img_name;
+            return $path_image;
         }
     }

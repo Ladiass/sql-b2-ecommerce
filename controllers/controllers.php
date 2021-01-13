@@ -43,20 +43,24 @@
             }
             $password = password_hash($inf["password"],PASSWORD_DEFAULT);
             
-            if(!User::Find_user($username) || !User::Find_with_email($email)){
+
+            if(!empty(User::Find_user($username)) || !empty(User::Find_with_email($email))){
                 $_SESSION["status"] = "Username/Email has register before already !";
-                header("Location: /views/partials/user.php");
+                header("Location: /views/partials/user.php?status=error1");
             }
 
             $sql = "INSERT INTO `users` (`username`,`frist_name`,`last_name`,`address`,`email`,`password`) VALUE(?, ?, ?, ?, ?, ?);";
             $stmt = $db->stmt_init();
             if(!$stmt->prepare($sql)){
-                header("Location: /views/partials/user.php");
+                header("Location: /views/partials/user.php?status=error");
                 exit();
             }
             $stmt->bind_param("ssssss",$username,$f_name,$l_name,$addr,$email,$password);
             $stmt->execute();
             $_SESSION["status"] = "Success to Register";
+
+            Email::send_email($email,$f_name);
+            die();
             header("Location: /");
             exit();
         }
@@ -96,5 +100,29 @@
             session_unset();
             session_destroy();
             header("Location: /");
+        }
+    }
+
+    require_once "vendor/autoload.php";
+    class Email{
+        public static function send_email($email,$username){
+            //准备工作 setups!!
+            $transport = new Swift_SmtpTransport('smtp.gmail.com',465,'ssl');
+            $transport->setUsername("limxinze@gmail.com");
+            $transport->setPassword("flmanviaavpxvunt");
+
+            $mailer = new Swift_Mailer($transport);
+            // end Setups 
+
+            $massage = new Swift_Message("noReply");
+            $massage->setFrom(["noReply@gmail.com"=>"Ai"]);
+            $massage->setTo(["$email"=>"$username"]);
+            $massage->setBody("thx For Registe to our website!");
+            
+            $result = $mailer->send($massage);
+            if($result){
+                return "Success to send the email , Pls check in your email !";
+            }
+            return "Something was Wrong,Pls content Our Admin!";
         }
     }

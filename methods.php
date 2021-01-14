@@ -20,7 +20,13 @@
         case "editproduct":
             Products::Edit($_GET["id"],$_POST);
             break;
-        // default:
-        //     header("Location: /");
-        //     break;
+        case "addcard":
+            Cart::add($_POST);
+            break;
+        case "cancelcart":
+            Cart::cancel($_GET["id"]);
+            break;
+        default:
+            header("Location: /");
+            break;
     }

@@ -10,7 +10,12 @@
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Card</a>
+                <a class="nav-link" href="/views/cart.php">
+                    Card
+                    <span class="badge bg-danger text-white" id="cart_count"><?php if(isset($_SESSION["cart"]) && count($_SESSION["cart"])){echo array_sum($_SESSION["cart"]);}else{
+                        echo 0;
+                    } ?></span>
+                </a>
             </li>
             <li class="nav-item dropdown dropdown-menu-right">
                 <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

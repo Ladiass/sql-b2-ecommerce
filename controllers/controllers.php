@@ -19,6 +19,7 @@
             if(!password_verify($password,$user["password"])){
                 $_SESSION["status"] = "UserName Or Password is wrong!";
                 header("Location: /views/partials/user.php?username=$username");
+                exit();
             }
             $_SESSION["status"] = "Login Success!";
             $_SESSION["user_details"] = $user;
@@ -100,6 +101,8 @@
             session_destroy();
             header("Location: /");
         }
+
+        
     }
 
     require_once "vendor/autoload.php";
@@ -245,5 +248,29 @@
             $db->close();
             header("Location: ".$_SERVER["HTTP_REFERER"]);
             exit();
+        }
+    }
+
+    class Cart{
+        public static function add($data){
+            $id = $data["id"];
+            $quantity = $data["quantity"];
+            if(!isset($_SESSION["cart"])){
+                $_SESSION["cart"][$id] = $quantity;
+            }else{
+                $_SESSION["cart"][$id] +=$quantity;
+            }
+            echo "Success Add to the Cart";
+        }
+
+        public static function cancel($id){
+            $vals = $_SESSION["cart"];
+            for($i = 0 ; $i < count($vals);$i++){
+                if(array_keys($vals)[$i] == $id){
+                     array_splice($_SESSION["cart"],$i,1);
+                     header("Location: ".$_SERVER["HTTP_REFERER"]);
+                     break;
+                }
+            }
         }
     }

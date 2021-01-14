@@ -14,4 +14,10 @@
         case "addpost":
             Products::add($_POST);
             break;
+        case "delproduct":
+            Products::delete($_GET["id"]);
+            break;
+        default:
+            header("Location: /");
+            break;
     }

@@ -30,3 +30,12 @@ header {
 .card-footer.row{
     gap: 10px;
 }
+.gap-1{
+    gap: 5px;
+}
+.gap-2{
+    gap: 10px;
+}
+.gap-3{
+    gap: 15px;
+}

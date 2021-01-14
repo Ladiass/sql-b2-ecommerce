@@ -74,7 +74,12 @@ function get_content()
                         </div>
                         <div class="card-footer row">
                             <a href="/methods.php?action=addcard&id=<?php echo $product["product_id"]?>" class="btn btn-primary">Add to Card</a>
-                            <a href="/views/partials" class="btn btn-warning">View Products</a>
+                        <a href="/views/partials/products_view.php?id=<?php echo $product["product_id"] ?> " class="btn btn-warning">View</a>
+                            <?php
+                            if(isset($_SESSION["user_details"]) && $_SESSION["user_details"]["isAdmin"]){ 
+                        ?> 
+                            <a href="/methods.php?action=delproduct&id=<?php echo $product["product_id"]?>" class="btn btn-danger">Delete</a>
+                        <?php } ?> 
                         </div>
                     </div>
                 <?php

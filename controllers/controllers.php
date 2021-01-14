@@ -184,4 +184,18 @@
             $path_image = "/assets/img/".$img_name;
             return $path_image;
         }
+        public static function Delete($id){
+            global $db;
+            $sql = "DELETE FROM `products` WHERE `products`.`product_id` = ?";
+            $stmt = $db->stmt_init();
+            if(!$stmt->prepare($sql)){
+                header("Location: /?status=Error!");
+                exit();
+            }
+            $stmt->bind_param("s",$id);
+            $stmt->execute();
+            $_SESSION["status"] = "Success to Delete";
+            $stmt->close();
+            header("Location: /");
+        }
     }

@@ -198,4 +198,52 @@
             $stmt->close();
             header("Location: /");
         }
+
+        public static function Edit($id, $newData){
+            global $db;
+            
+            $name = $newData["product_name"];
+            $price = $newData["price"];
+            $desc = $newData["desc"];
+            $sql = "UPDATE `products` SET `name`=?,`price`=?,`description`=? WHERE `products`.product_id = ?";
+            $stmt = $db->stmt_init();
+            if(!$stmt->prepare($sql)){
+                $_SESSION["status"] = "Some thing got Error";
+                header("Location: ".$_SERVER["HTTP_REFERER"]);
+                exit();
+            }
+            $stmt->bind_param("sdsi",$name,$price,$desc,$id);
+            if(!empty($_FILES["image"]["tmp_name"])){
+                $img_path = Products::image($_FILES);
+                $sql = "UPDATE `products` SET `name`=?,`price`=?,`description`=?,`image`=? WHERE `products`.`product_id` = ?";
+                if(!$stmt->prepare($sql)){
+                    $_SESSION["status"] = "Some thing got Error";
+                    header("Location: ".$_SERVER["HTTP_REFERER"]);
+                    exit();
+                }
+                $stmt->bind_param("sdssi",$name,$price,$desc,$img_path,$id);
+            }
+            $stmt->execute();
+            $stmt->close();
+            $db->close();
+            header("Location: /views/partials/products_view.php?id=$id");
+            exit();
+        }
+        public static function edt_image($id,$image){
+            global $db;
+            $img_path = Products::image($image);
+            $sql = "UPDATE `products` SET `image`=? WHERE `products`.`product_id` = ?";
+            $stmt = $db->stmt_init();
+            if(!$stmt->prepare($sql)){
+                $_SESSION["status"] = "Some thing got Error";
+                header("Location: ".$_SERVER["HTTP_REFERER"]);
+                exit();
+            }
+            $stmt->bind_param("si",$img_path,$id);
+            $stmt->execute();
+            $stmt->close();
+            $db->close();
+            header("Location: ".$_SERVER["HTTP_REFERER"]);
+            exit();
+        }
     }

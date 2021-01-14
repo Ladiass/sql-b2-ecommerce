@@ -17,7 +17,10 @@
         case "delproduct":
             Products::delete($_GET["id"]);
             break;
-        default:
-            header("Location: /");
+        case "editproduct":
+            Products::Edit($_GET["id"],$_POST);
             break;
+        // default:
+        //     header("Location: /");
+        //     break;
     }

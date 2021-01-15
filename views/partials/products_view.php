@@ -5,6 +5,7 @@
         header("Location: /views/forms/missing-page.php");
         exit();
     }
+    
     function get_content(){
         global $db;
         $id = $_GET["id"]; 

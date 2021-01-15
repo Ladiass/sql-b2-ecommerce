@@ -33,21 +33,50 @@
                     ?>
                         <tr>
                             <td><?php echo $product["name"] ?> </td>
-                            <td>RM <?php echo $product["price"] ?></td>
+                            <td>$<?php echo $product["price"] ?></td>
                             <td><?php echo $quantity ?></td>
-                            <td>RM <?php echo number_format($product["price"]*$quantity , 2) ?> </td>
+                            <td>$<?php echo number_format($product["price"]*$quantity , 2); $total += $product["price"]*$quantity; ?> </td>
                             <td><a href="/methods.php?action=cancelcart&id=<?php echo $id ?> "><i class="fas fa-times fa-1x "></i></a></td>
                         </tr>
                     <?php }?> 
+                        <tr>
+                            <td>
+                                <a href="/methods.php?action=emptycart" class="btn btn-danger">Empty The Card</a>
+                            </td>
+                            <td>
+                                <button class="btn btn-outline-success"
+                                    data-toggle="modal" data-target="#checkout-modal"
+                                >Checkout</button>
+                                <div class="modal fade" id="checkout-modal">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirm Checkout</h5>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Are you really sure about your orders?</p>
+                                                <strong>Total: $<?php echo number_format($total,2) ?></strong>
+                                            </div>
+                                            <div class="modal-footer"><input type="submit" value="Close" class="btn btn-secondary" data-dismiss="modal">
+                                            <a href="/methods.php?action=checkoutcart&pid=1" class="btn btn-success">Checkout</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td id="paypal-button-container">
+
+                            </td>
+                            <td>Total: $<?php echo number_format($total,2)?></td>
+                        </tr>
                 </tbody>
             </table>
         <?php }else{?>
         <h2>Your cart is empty</h2>
         <a href="/">Go back to shopping</a>
-        <?php
-        } ?> 
+        <?php }?> 
     </div>
 <?php
     }
     include "forms/layout.php";
-?> 
+?>

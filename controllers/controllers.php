@@ -67,7 +67,7 @@
 
         public static function Find_user($username){
             global $db ;
-            $sql = "SELECT `username`,`email`,`password`,`isAdmin` FROM `users` WHERE `username` = ?";
+            $sql = "SELECT `user_id`,`username`,`email`,`password`,`isAdmin` FROM `users` WHERE `username` = ?";
             $stmt = $db->prepare($sql);
             
             $stmt->bind_param("s",$username);
@@ -82,7 +82,7 @@
 
         public static function Find_with_email($email){
             global $db ;
-            $sql = "SELECT `username`,`email`,`password`,`isAdmin` FROM `users` WHERE `email` = ? ";
+            $sql = "SELECT `user_id`,`username`,`email`,`password`,`isAdmin` FROM `users` WHERE `email` = ? ";
             $stmt = $db->prepare($sql);
             
             $stmt->bind_param("s",$email);
@@ -258,19 +258,77 @@
             if(!isset($_SESSION["cart"])){
                 $_SESSION["cart"][$id] = $quantity;
             }else{
-                $_SESSION["cart"][$id] +=$quantity;
+                $_SESSION["cart"][$id] += $quantity;
             }
             echo "Success Add to the Cart";
         }
 
         public static function cancel($id){
-            $vals = $_SESSION["cart"];
-            for($i = 0 ; $i < count($vals);$i++){
-                if(array_keys($vals)[$i] == $id){
-                     array_splice($_SESSION["cart"],$i,1);
-                     header("Location: ".$_SERVER["HTTP_REFERER"]);
-                     break;
+            unset($_SESSION["cart"][$id." "]);
+            header("Location: ".$_SERVER["HTTP_REFERER"]);
+        }
+        public static function empty(){
+            unset($_SESSION["cart"]);
+            header("Location: ".$_SERVER["HTTP_REFERER"]);
+        }
+
+
+        public static function checkout($pid){
+            global $db;
+            date_default_timezone_set("Asia/Kuala_Lumpur");
+            
+            if(isset($_SESSION["cart"])){
+                $user_id = $_SESSION["user_details"]["user_id"];
+                $total = 0 ;
+                $transaction_code = "TSC-".date("His")."-".mt_rand();
+                $payment_id = $pid;
+                $status_id = 1;
+
+                $sql = "INSERT INTO `orders`( `total`,`transaction_code`, `user_id`, `status_id`, `payment_id`) VALUES (?,?,?,?,?)";
+                $stmt = $db->stmt_init();
+                if(!$stmt->prepare($sql)){
+                    echo "Something Wrong!";
+                    exit();
                 }
+                $stmt->bind_param("dsiii",$total,$transaction_code,$user_id,$status_id,$payment_id);
+                $stmt->execute();
+                
+                $order_id = $db->insert_id;
+                // this will return you the id of your last query;
+
+                foreach($_SESSION["cart"] as $id=>$quantity){
+                    $sql = "SELECT * FROM `products` WHERE product_id = ?";
+                    if(!$stmt->prepare($sql)){
+                        echo "Something Wrong!";
+                        exit();
+                    }
+                    $stmt->bind_param("i",$id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $product = $result->fetch_assoc();
+
+                    $total =+ ($product["price"]*$quantity);
+
+
+                    $sql = "INSERT INTO `order_products`(`product_id`,`order_id`,`quantity`) VALUES(?,?,?)";
+                    if(!$stmt->prepare($sql)){
+                        echo "Something Wrong!";
+                        exit();
+                    }
+                    $stmt->bind_param("iii",$id,$order_id,$quantity);
+                    $stmt->execute();
+                    
+                }
+                $sql = "UPDATE `orders` SET `total`= ? WHERE order_id = ?";
+                if(!$stmt->prepare($sql)){
+                    echo "Something Wrong!";
+                    exit();
+                }
+                $stmt->bind_param("di",$total,$order_id);
+                $stmt->execute();
+                $stmt->close();
+                $db->close();
+                Cart::empty();
             }
         }
     }

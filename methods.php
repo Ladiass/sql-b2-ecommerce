@@ -26,6 +26,12 @@
         case "cancelcart":
             Cart::cancel($_GET["id"]);
             break;
+        case "emptycart":
+            Cart::empty();
+            break;
+        case "checkoutcart":
+            Cart::checkout($_GET["pid"]);
+            break;
         default:
             header("Location: /");
             break;

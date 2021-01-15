@@ -79,9 +79,8 @@ $products = get_data("products");
                         <div class="card-footer row">
                             <div class="input-group">
                                 <input type="number" name="quantity" class="form-control" min="1">
-                                <input type="submit" class="btn btn-outline-success addcard" data-id="<?php echo $product["product_id"] ?> " value="Add to Card">
+                                <input type="submit" class="btn btn-outline-success addcard" data-id="<?php echo $product["product_id"] ?>" value="Add to Card">
                             </div>
-
                             <a href="/views/partials/products_view.php?id=<?php echo $product["product_id"] ?> " class="btn btn-warning">View</a>
                             <?php
                             if (isset($_SESSION["user_details"]) && $_SESSION["user_details"]["isAdmin"]) {
@@ -90,9 +89,7 @@ $products = get_data("products");
                         <?php }?>
                         </div>
                     </div>
-                <?php
-}
-    ?>
+                <?php }?>
             </div>
         </div>
     </section>

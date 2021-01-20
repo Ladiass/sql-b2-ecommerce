@@ -45,7 +45,7 @@
                             </td>
                             <td>
                                 <button class="btn btn-outline-success"
-                                    data-toggle="modal" data-target="#checkout-modal"
+                                    data-bs-toggle="modal" data-bs-target="#checkout-modal"
                                 >Checkout</button>
                                 <div class="modal fade" id="checkout-modal">
                                     <div class="modal-dialog">
@@ -65,7 +65,7 @@
                                 </div>
                             </td>
                             <td id="paypal-button-container">
-
+                            
                             </td>
                             <td>Total: $<?php echo number_format($total,2)?></td>
                         </tr>
@@ -76,6 +76,34 @@
         <a href="/">Go back to shopping</a>
         <?php }?> 
     </div>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=AShm6AThFoD4DF6Em9HN2SCJP9-5lhxu8KLW7Yzzk8LJkQc-0AcxQveClOQKesPerBw-lOMzXLmqdm2R"></script>
+
+
+<script>
+
+paypal.Buttons({
+	createOrder: function(data, actions) {
+		return actions.order.create({
+			purchase_units: [{
+				amount: {
+                    value: <?php echo $total; ?>
+                }
+			}]
+		})
+	},
+	onApprove: function(data, actions) {
+		return actions.order.capture().then(function(details) {
+			alert("Transaction completed by " + details.payer.name.given_name)
+			fetch('/methods.php?action=checkoutcart&pid=2').then(location.reload());
+		})
+	}
+}).render('#paypal-button-container');
+
+</script>
+
+
+
 <?php
     }
     include "forms/layout.php";

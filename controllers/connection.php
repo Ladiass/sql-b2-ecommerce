@@ -1,8 +1,8 @@
 <?php
-    $host = "localhost";
-    $username = "root";
-    $password = "";
-    $dbName = "bew12_ecommerce";
+    $host = "db4free.net";
+    $username = "liadas";
+    $password = "tss010430";
+    $dbName = "b2ecommerce";
 
     $db = new mysqli($host , $username , $password, $dbName);
     if($db->connect_error){

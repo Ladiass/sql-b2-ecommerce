@@ -118,8 +118,8 @@
 
             $massage = new Swift_Message("noReply");
             $massage->setFrom(["noReply@gmail.com"=>"Ai"]);
-            $massage->setTo(["$email"=>"$username"]);
-            $massage->setBody("thx For Registe to our website!");
+            $massage->setTo([$email=>$username]);
+            $massage->setBody("thx For Register to our website!");
             
             $result = $mailer->send($massage);
             if($result){
@@ -131,6 +131,22 @@
 
     class Products{
 
+        public static function active($status,$id){
+            global $db;
+            $isActive = 1;
+            if($status){
+                $isActive = "0";
+            }
+            $sql = "UPDATE `products` SET `isActive` = ? WHERE `products`.`product_id` = ?";
+            $stmt = $db->stmt_init();
+            if(!$stmt->prepare($sql)){
+                echo "Something wrong!";
+                exit();
+            }
+            $stmt->bind_param("ii",$isActive,$id);
+            $stmt->execute();
+            header("Location: ".$_SERVER["HTTP_REFERER"]);
+        }
 
         public static function add($data){
             global $db;

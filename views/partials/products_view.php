@@ -39,6 +39,12 @@
                         <?php if(isset($_SESSION["user_details"]) && $_SESSION["user_details"]["isAdmin"]){ ?> 
                             <a href="/views/partials/product_edit.php?action=edit&id=<?php echo $id ?> " class="btn btn-warning">Edit</a>
                             <a href="/methods.php?action=delproduct&id=<?php echo $id ?> " class="btn btn-danger">Delete</a>
+                            <?php if($product["isActive"]){?>
+                                <a href="/methods.php?action=active&status=1&id=<?php echo $id ?>" class="btn btn-warning">UnActive</a>
+                            <?php
+                            }else{?>
+                                <a href="/methods.php?action=active&status=0&id=<?php echo $id ?>" class="btn btn-success">Active</a>
+                            <?php } ?>
                         <?php } ?> 
 
                         <div class="input-group">

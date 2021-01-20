@@ -68,6 +68,14 @@ $categories = get_data("categories");
                 <?php
 $products = get_data("products");
     foreach ($products as $product) {
+        if(isset($_SESSION["user_details"])){
+            if(!$_SESSION["user_details"]["isAdmin"] && !$product["isActive"]){
+                continue;
+            }
+        }elseif(!$product["isActive"]){
+            continue;
+        }
+       
         ?>
                     <div class="card mx-3 overx-hidden" style="width: 18rem;">
                         <img class="card-img-top" src="<?php echo $product["image"]; ?> " alt="Card image cap">

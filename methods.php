@@ -32,7 +32,10 @@
         case "checkoutcart":
             Cart::checkout($_GET["pid"]);
             break;
+        case "active":
+            Products::active($_GET["status"],$_GET["id"]);
+            break;
         default:
-            header("Location: /");
+            header("Location: ".$_SERVER["HTTP_REFERER"]);
             break;
     }

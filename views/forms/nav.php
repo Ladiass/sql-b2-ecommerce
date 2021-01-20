@@ -12,23 +12,30 @@
             <li class="nav-item">
                 <a class="nav-link" href="/views/cart.php">
                     Card
-                    <span class="badge bg-danger text-white" id="cart_count"><?php if(isset($_SESSION["cart"]) && count($_SESSION["cart"])){echo array_sum($_SESSION["cart"]);}else{
-                        echo 0;
-                    } ?></span>
+                    <span class="badge bg-danger text-white" id="cart_count"><?php if (isset($_SESSION["cart"]) && count($_SESSION["cart"])) {echo array_sum($_SESSION["cart"]);} else {
+    echo 0;
+}?></span>
                 </a>
             </li>
             <li class="nav-item dropdown dropdown-menu-right">
                 <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <?php !isset($_SESSION["user_details"]) ? print "User" : print $_SESSION["user_details"]["username"] ?> 
+                    <?php !isset($_SESSION["user_details"]) ? print "User" : print $_SESSION["user_details"]["username"]?>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownId">
-                    <?php if(!isset($_SESSION["user_details"])){ ?> 
+                    <?php if (!isset($_SESSION["user_details"])) {?>
                         <a class="dropdown-item" href="/views/partials/user.php">Login/Register</a>
-                    <?php } ?> 
-                    <?php if(isset($_SESSION["user_details"])){ ?> 
-                        <a class="dropdown-item" href="#">Payments</a> 
+                    <?php }?>
+                    <?php if (isset($_SESSION["user_details"])) {
+    if ($_SESSION["user_details"]) {
+        ?>
+                                <a class="dropdown-item" href="/views/transaction.php">Transaction</a>
+<?php
+
+    }
+    ?>
+                        <a class="dropdown-item" href="#">Payments</a>
                         <a class="dropdown-item" href="/methods.php?action=logout">Logout</a>
-                    <?php } ?> 
+                    <?php }?>
                 </div>
             </li>
         </ul>
